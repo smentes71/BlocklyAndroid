@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Çocuklar için Kodlama</title>
+  <script src="https://unpkg.com/blockly@10.0.0/blockly.min.js"></script>
+  <style>
+    body {
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      background-color: #fffcec;
+    }
+    h2 {
+      color: #ff8a65;
+      text-align: center;
+      font-size: 36px;
+    }
+    button {
+      background-color: #ffcc80;
+      border: none;
+      color: #5d4037;
+      padding: 20px 40px;
+      font-size: 24px;
+      margin: 20px auto;
+      display: block;
+      cursor: pointer;
+      border-radius: 30px;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    #blocklyDiv {
+      height: 500px;
+      width: 90%;
+      margin: 0 auto;
+      border-radius: 20px;
+      background-color: white;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🧸 Haydi Kodlayalım!</h2>
+  <div id="blocklyDiv"></div>
+  <button onclick="runCode()">🚀 Başlat</button>
+
+  <xml id="toolbox" style="display: none">
+    <category name="🟡 Başla" colour="#FFB6C1">
+      <block type="start_block"></block>
+    </category>
+    <category name="🔵 Aksiyon" colour="#87CEFA">
+      <block type="emoji_block"></block>
+    </category>
+    <category name="🧠 Karar & Döngü" colour="#FFF176">
+      <block type="repeat_block"></block>
+      <block type="if_block"></block>
+      <block type="yesno_block"></block>
+    </category>
+  </xml>
+
+  <script>
+    // Tema
+    Blockly.Theme.defineTheme('babyTheme', {
+      base: Blockly.Themes.Classic,
+      fontStyle: {
+        family: '"Comic Sans MS", cursive, sans-serif',
+        weight: 'bold',
+        size: 14
+      },
+      componentStyles: {
+        workspaceBackgroundColour: '#fffcef',
+        toolboxBackgroundColour: '#fff3e0',
+        toolboxForegroundColour: '#ff8a65',
+        flyoutBackgroundColour: '#fff8e1',
+        flyoutOpacity: 0.9,
+        scrollbarColour: '#ffe0b2',
+        cursorColour: '#ffa726'
+      }
+    });
+
+    // Başla bloğu
+    Blockly.Blocks['start_block'] = {
+      init: function () {
+        this.appendDummyInput().appendField("🟢 Başla");
+        this.setNextStatement(true, null);
+        this.setColour("#FFB6C1");
+        this.setTooltip("Program başlasın");
+      }
+    };
+    Blockly.JavaScript['start_block'] = function () {
+      return '// Başladı\n';
+    };
+
+    // Hayvan sesi bloğu
+    Blockly.Blocks['emoji_block'] = {
+      init: function () {
+        this.appendDummyInput().appendField("🐱 Hayvan sesi çıkar");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour("#87CEFA");
+        this.setTooltip("Sevimli hayvan sesi");
+      }
+    };
+
+
+    Blockly.JavaScript['emoji_block'] = function () {
+      var code = `
+#!/usr/bin/env python3
+from pidog import Pidog
+from time import sleep
+from preset_actions import howling
+
+my_dog = Pidog()
+
+sleep(0.5)
+
+def main():
+    my_dog.do_action('sit', speed=50)
+    my_dog.head_move([[0, 0, 0]], pitch_comp=-40, immediately=True, speed=80)
+    sleep(0.5)
+    while True:
+        howling(my_dog)
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        print(f"\\033[31mERROR: {e}\\033[m")
+    finally:
+        my_dog.close()
+`;
+  return code;
+    };
+
+   
+    
+
+
+    // Tekrar Et bloğu
+    Blockly.Blocks['repeat_block'] = {
+      init: function () {
+        this.appendDummyInput()
+          .appendField("🔁 Tekrar et")
+          .appendField(new Blockly.FieldNumber(3, 1, 10), "COUNT")
+          .appendField("kez");
+        this.appendStatementInput("DO").setCheck(null).appendField("👉 Yap:");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour("#FFD54F");
+        this.setTooltip("Bir şeyi tekrar tekrar yapar");
+      }
+    };
+    Blockly.JavaScript['repeat_block'] = function (block) {
+      const count = block.getFieldValue('COUNT');
+      const statements = Blockly.JavaScript.statementToCode(block, 'DO');
+      return `for (let i = 0; i < ${count}; i++) {\n${statements}}\n`;
+    };
+
+    // Eğer bloğu
+    Blockly.Blocks['if_block'] = {
+      init: function () {
+        this.appendValueInput("CONDITION").setCheck("Boolean")
+            .appendField("❓ Eğer bu doğruysa:");
+        this.appendStatementInput("DO").setCheck(null).appendField("✅ Yap:");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour("#FF8A65");
+        this.setTooltip("Eğer durum doğruysa bir şey yapar");
+      }
+    };
+    Blockly.JavaScript['if_block'] = function (block) {
+      const condition = Blockly.JavaScript.valueToCode(block, 'CONDITION', Blockly.JavaScript.ORDER_NONE) || 'false';
+      const doCode = Blockly.JavaScript.statementToCode(block, 'DO');
+      return `if (${condition}) {\n${doCode}}\n`;
+    };
+
+    // Evet/Hayır bloğu
+    Blockly.Blocks['yesno_block'] = {
+      init: function () {
+        this.appendDummyInput()
+            .appendField("🙂 Doğru mu?")
+            .appendField(new Blockly.FieldDropdown([["Evet", "true"], ["Hayır", "false"]]), "BOOL");
+        this.setOutput(true, "Boolean");
+        this.setColour("#AED581");
+        this.setTooltip("Evet veya Hayır");
+      }
+    };
+    Blockly.JavaScript['yesno_block'] = function (block) {
+      const val = block.getFieldValue('BOOL');
+      return [val, Blockly.JavaScript.ORDER_ATOMIC];
+    };
+
+    // Blockly başlat
+    const workspace = Blockly.inject('blocklyDiv', {
+      toolbox: document.getElementById('toolbox'),
+      theme: 'babyTheme',
+      renderer: 'zelos',
+      trashcan: false,
+      zoom: {
+        startScale: 1.3,
+        controls: true,
+        wheel: false
+      },
+      grid: {
+        spacing: 25,
+        length: 3,
+        colour: '#ccc',
+        snap: true
+      }
+    });
+
+    // Çalıştır butonu
+    function runCode() {
+      try {
+        // Blockly çalışma alanındaki kodu al
+        const code = Blockly.JavaScript.workspaceToCode(workspace);
+    
+        // JSON veri formatı
+        const jsonData = {
+          code: code,
+          timestamp: new Date().toISOString(),
+          user: "test_kullanici"
+        };
+    
+        console.log("Gönderilen JSON:", JSON.stringify(jsonData, null, 2));
+    
+        // Sunucuya POST isteği
+        fetch('http://192.168.43.128:5280/execute', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(jsonData)
+        })
+        .then(response => {
+          if (!response.ok) throw new Error("Sunucu hatası");
+          return response.json();
+        })
+        .then(data => {
+          console.log("Sunucu yanıtı:", data);
+          eval(code); // yalnızca başarılı gönderim sonrası kodu çalıştır
+        })
+        .catch(error => {
+          console.error("POST hatası:", error);
+          alert("Gönderme hatası: " + error.message);
+        });
+    
+      } catch (e) {
+        alert("Kod çalıştırma hatası: " + e);
+      }
+    }
+    
+    
+    
+  </script>
+</body>
+</html>
