@@ -2,21 +2,17 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Çocuklar için Kodlama</title>
   <script src="https://unpkg.com/blockly@10.0.0/blockly.min.js"></script>
   <style>
     body {
       font-family: "Comic Sans MS", cursive, sans-serif;
       background-color: #fffcec;
-      margin: 0;
-      padding: 10px;
     }
     h2 {
       color: #ff8a65;
       text-align: center;
       font-size: 36px;
-      margin: 10px 0;
     }
     button {
       background-color: #ffcc80;
@@ -42,19 +38,6 @@
       border-radius: 20px;
       background-color: white;
       box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    }
-    
-    /* Input alanları için özel stil */
-    .blocklyHtmlInput {
-      font-size: 16px !important;
-      padding: 5px !important;
-      border: 2px solid #4CAF50 !important;
-      border-radius: 5px !important;
-      background-color: white !important;
-    }
-    
-    .blocklyFieldTextInput {
-      font-size: 16px !important;
     }
   </style>
 </head>
@@ -122,6 +105,7 @@
       }
     };
 
+
     Blockly.JavaScript['emoji_block'] = function () {
       var code = `
 #!/usr/bin/env python3
@@ -150,10 +134,14 @@ if __name__ == "__main__":
     finally:
         my_dog.close()
 `;
-      return code;
+  return code;
     };
 
-    // Tekrar Et bloğu - Klavye sorunu için özel field
+   
+    
+
+
+    // Tekrar Et bloğu
     Blockly.Blocks['repeat_block'] = {
       init: function () {
         this.appendDummyInput()
@@ -226,29 +214,6 @@ if __name__ == "__main__":
       }
     });
 
-    // Input field'lar için event listener ekle
-    workspace.addChangeListener(function(event) {
-      if (event.type === Blockly.Events.SELECTED) {
-        // Seçilen blok varsa ve field'ı varsa
-        setTimeout(function() {
-          const inputs = document.querySelectorAll('.blocklyHtmlInput, .blocklyFieldTextInput');
-          inputs.forEach(function(input) {
-            input.addEventListener('focus', function() {
-              this.style.fontSize = '16px';
-              // Klavyeyi zorla göster
-              this.setAttribute('inputmode', 'numeric');
-              this.click();
-            });
-            
-            input.addEventListener('touchstart', function(e) {
-              e.stopPropagation();
-              this.focus();
-            });
-          });
-        }, 100);
-      }
-    });
-
     // Çalıştır butonu
     function runCode() {
       try {
@@ -265,7 +230,7 @@ if __name__ == "__main__":
         console.log("Gönderilen JSON:", JSON.stringify(jsonData, null, 2));
     
         // Sunucuya POST isteği
-        fetch('http://192.168.43.128:5280/execute', {
+        fetch('http://192.168.1.140:5280/execute', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -289,6 +254,9 @@ if __name__ == "__main__":
         alert("Kod çalıştırma hatası: " + e);
       }
     }
+    
+    
+    
   </script>
 </body>
 </html>
