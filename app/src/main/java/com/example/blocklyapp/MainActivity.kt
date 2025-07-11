@@ -28,7 +28,7 @@ import com.example.blocklyapp.ui.theme.BlocklyAppTheme
 
 class MainActivity : ComponentActivity() {
     
-    private lateinit var bleManager: BleManager
+    lateinit var bleManager: BleManager
     
     // İzin isteme launcher'ı
     private val requestPermissionLauncher = registerForActivityResult(
