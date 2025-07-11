@@ -2,8 +2,9 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Çocuklar için Kodlama</title>
+  <title>Çocuklar için Kodlama Ekranı</title>
   <script src="https://unpkg.com/blockly@10.0.0/blockly.min.js"></script>
+  <!--<script src="./blockly.min.js"></script>!-->
   <style>
     body {
       font-family: "Comic Sans MS", cursive, sans-serif;
@@ -53,6 +54,7 @@
     </category>
     <category name="🔵 Aksiyon" colour="#87CEFA">
       <block type="emoji_block"></block>
+      <block type="emoji_block2"></block>
     </category>
     <category name="🧠 Karar & Döngü" colour="#FFF176">
       <block type="repeat_block"></block>
@@ -93,6 +95,34 @@
     Blockly.JavaScript['start_block'] = function () {
       return '// Başladı\n';
     };
+
+    // Led yak bloğu
+    Blockly.Blocks['emoji_block2'] = {
+      init: function () {
+        this.appendDummyInput().appendField("🐱 led yak sondur");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour("#87CEFA");
+        this.setTooltip("led yakma");
+      }
+    };
+
+    Blockly.JavaScript['emoji_block2'] = function () {
+      var code = `
+from machine import Pin
+import time
+led = Pin(5, Pin.OUT)
+while True:
+    led.on()
+    print("LED YANDI___")
+    time.sleep(1)
+    led.off()
+    print("LED SÖNDÜ___")
+    time.sleep(1)
+`;
+  return code;
+    };
+
 
     // Hayvan sesi bloğu
     Blockly.Blocks['emoji_block'] = {
@@ -219,7 +249,8 @@ if __name__ == "__main__":
       try {
         // Blockly çalışma alanındaki kodu al
         const code = Blockly.JavaScript.workspaceToCode(workspace);
-    
+        
+        console.log(code);
         // JSON veri formatı
         const jsonData = {
           code: code,
@@ -230,12 +261,12 @@ if __name__ == "__main__":
         console.log("Gönderilen JSON:", JSON.stringify(jsonData, null, 2));
     
         // Sunucuya POST isteği
-        fetch('http://192.168.1.140:5280/execute', {
+        fetch('http://192.168.4.1', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/text'
           },
-          body: JSON.stringify(jsonData)
+          body: code
         })
         .then(response => {
           if (!response.ok) throw new Error("Sunucu hatası");
