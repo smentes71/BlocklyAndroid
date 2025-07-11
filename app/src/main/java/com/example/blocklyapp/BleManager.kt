@@ -6,6 +6,7 @@ import android.bluetooth.*
 import android.bluetooth.le.*
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.ParcelUuid
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
